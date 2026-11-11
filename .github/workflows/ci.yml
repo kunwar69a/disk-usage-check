@@ -1,0 +1,34 @@
+name: PowerShell CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: Lint script
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path ./disk-check.ps1 -Severity Error, Warning
+          $results | Format-Table -AutoSize
+          if ($results.Count -gt 0) { exit 1 }
+
+  script-check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run disk check
+        shell: pwsh
+        run: ./disk-check.ps1 -ThresholdPercent 0
