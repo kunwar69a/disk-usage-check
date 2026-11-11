@@ -13,4 +13,3 @@ foreach ($drive in $drives) {
         Write-Warning "$($drive.DeviceID) is below the $ThresholdPercent% free-space threshold"
     }
 }
-if ()
